@@ -1,4 +1,4 @@
-require_relative '../lib/00_dark_trader' #fichier .rb
+require_relative '../lib/01_mairie_christmas' #fichier .rb
 
 describe "get html and css from an url" do
   it "should return html" do
@@ -7,8 +7,14 @@ describe "get html and css from an url" do
 end
 
 describe "get coins info from no-wrap text-right " do
-        it "shoul return a hash" do
-        expect(extract_coins_info("https://coinmarketcap.com/all/views/all/")).to include("Bitcoin","Ethereum")
+  it "shoul return a hash" do
+    expect(get_list_of_links_cities_method_open("http://annuaire-des-mairies.com/val-d-oise.html")).to include("http://annuaire-des-mairies.com/95/ableiges.html")
+  end
 end
 
+describe "get coins info from no-wrap text-right " do
+  it "shoul return a hash" do
+    expect(extract_emails("http://annuaire-des-mairies.com/val-d-oise.html")).to include("le-plessis-luzarches"=>"mairieplessisluzarches@orange.fr")
+  end
 end
+

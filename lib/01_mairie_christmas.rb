@@ -4,34 +4,20 @@ require 'nokogiri'
 require 'open-uri'
 #require 'restclient'
 
+def get_html_from_url(url)
+	return page = Nokogiri::HTML(open(url))
+end
+
+def get_html_rest(url)
+	return page = Nokogiri::HTML(RestClient.get(url))	 
+end
+
 def get_list_of_links_cities_method_open(url)
-	links_all_cities_array=[]
-	page = Nokogiri::HTML(open(url))
-	cities_link_array=page.xpath('//html/body/table/tr[3]/td/table/tr/td[2]/table/tr/td')
-	#cities_link_array.each do |link|
-		cities_link_array.css("a").map{|linka| links_all_cities_array<<linka['href'] }
-    	 #end
-  return links_all_cities_array
-	
-	#cities_link_array=page.xpath('//html/body/table/tr[3]/td/table/tr/td[2]/p[2]/object/table/tr[2]/td/table/tr/td[1]/p/a[1]')
-	#puts page
-	#puts cities_link_array
-
-end
-
-def get_list_of_links_cities_method_rest(url)
         links_all_cities_array=[]
-        page = Nokogiri::HTML(RestClient.get(url))
-
-	 cities_link_array=page.xpath('//html/body/table/tr[3]/td/table/tr/td[2]/table/tr/td')
-        cities_link_array.each do |link|
-                links_all_cities_array<<link.css("a").map{ |linka| linka['href'] }
-         end
-  return links_all_cities_array
-
-end
-
-  
+        cities_link_array=get_html_from_url(url).xpath('//html/body/table/tr[3]/td/table/tr/td[2]/table/tr/td')
+        cities_link_array.css("a").map{|link| links_all_cities_array<<"http://annuaire-des-mairies.com#{link['href'][1,link['href'].length]}"}
+	return links_all_cities_array
+end 
 
 def extract_emails(url)
         result=Hash.new
@@ -39,16 +25,12 @@ def extract_emails(url)
 	email_mairie=""
 
 	get_list_of_links_cities_method_open(url).each do |html_link|
-	#	name=html_link
-	#	puts html_link
-		link_name="http://annuaire-des-mairies.com#{html_link[1,html_link.length]}"
-	#	puts link_name
-		page = Nokogiri::HTML(open(link_name))
-		city_name=page.xpath('/html/body/div/main/section[2]/div/table/thead/tr/th[1]').text
-		email_mairie=page.xpath('//html/body/div/main/section[2]/div/table/tbody/tr[4]/td[2]').text
-		result[city_name[32,city_name.length]]=email_mairie
+	   page = Nokogiri::HTML(open(html_link))
+	   city_name=page.xpath('/html/body/div/main/section[2]/div/table/thead/tr/th[1]').text.capitalize
+	  email_mairie=page.xpath('//html/body/div/main/section[2]/div/table/tbody/tr[4]/td[2]').text
+	  result[city_name[32,city_name.length]]=email_mairie
 	end
-  return result
+  	  return result
 end
 
 puts extract_emails("http://annuaire-des-mairies.com/val-d-oise.html")
