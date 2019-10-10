@@ -14,8 +14,8 @@ def extract_crypto_info(url)
   all_crypto_info_array=get_html_from_url(url).xpath('//html/body/div[2]/div[2]/div/div/div[3]/div[2]/table/tbody/tr')
   all_crypto_info_array.each do |crypto_info|
     result_hash=Hash.new
-    coin_name=crypto_info.css("td[class='no-wrap currency-name']").css("a[class='currency-name-container link-secondary']").text
-    coin_price=crypto_info.css("td[class='no-wrap text-right']").css("a[class='price']").text
+    coin_name=crypto_info.css("td[class='text-left col-symbol']").text
+    coin_price=crypto_info.css("td[class='no-wrap text-right']").css("a[class='price']").text.to_s.delete"$"
     result_hash[coin_name]=coin_price
     result_array<<result_hash
   end

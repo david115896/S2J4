@@ -8,7 +8,7 @@ end
 
 describe "get coins info from no-wrap text-right " do
         it "shoul return a hash" do
-        expect(extract_crypto_info("https://coinmarketcap.com/all/views/all/")).to include("Bitcoin","Ethereum")
+        expect(extract_crypto_info("https://coinmarketcap.com/all/views/all/")).to include(include("BTC"))
 end
 
 end      
